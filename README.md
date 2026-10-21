@@ -255,3 +255,26 @@ systemctl --user enable --now rclone-gdrive.service
 > client ID/secret plus the Drive scope, then remove and re-add the Google account. Ready-made
 > scripts + full write-up: <https://github.com/ritchiegerona/kio-gdrive-fix> (rclone mount is the
 > low-effort alternative for @gmail.com accounts).**
+
+---
+
+## Update (2026-10-21): installed on the author's machine via rclone (personal @gmail)
+
+For a personal `@gmail.com` account the rclone path was chosen. Notes from the live install
+(rclone v1.75.2, Fedora 44):
+
+- `downloads.rclone.org` timed out on this connection; the GitHub release asset downloaded fine:
+  `https://github.com/rclone/rclone/releases/download/v1.75.2/rclone-v1.75.2-linux-amd64.zip`
+  → install to `~/.local/bin/rclone` (no sudo needed).
+- Non-interactive remote creation: `rclone config create gdrive drive scope drive --non-interactive`
+- `rclone config reconnect gdrive:` now asks **two** interactive questions (v1.75+: "Continue using
+  the shared client_id anyway?" and "Use web browser to automatically authenticate?") — answer `y`
+  to both (`printf 'y\ny\n' | rclone config reconnect gdrive:`), the browser opens and stores the
+  token automatically.
+- ⚠️ rclone warns its **shared Drive client_id is being retired during 2026**. When that time
+  comes (or proactively), create your own client_id (same Console steps as in the kio-gdrive fix,
+  section A) and run `rclone config reconnect gdrive:` with it — the *same* OAuth client can then
+  also power native kio-gdrive via the provider override, if ever wanted.
+- Auto-mount unit: `~/.config/systemd/user/rclone-gdrive.service` (see snippet above),
+  `systemctl --user enable --now rclone-gdrive` — verified: `findmnt ~/GoogleDrive` shows
+  `fuse.rclone`, files listed by Dolphin.
