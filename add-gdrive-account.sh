@@ -26,7 +26,7 @@ echo "==> Creating remote '$remote' (scope: drive)"
 "$RCLONE" config create "$remote" drive scope drive --non-interactive >/dev/null
 
 echo "==> A browser window will open — sign in with the NEW Google account and click Allow."
-printf 'y\ny\n' | "$RCLONE" config reconnect "$remote:"
+printf 'y\ny\nn\n' | "$RCLONE" config reconnect "$remote:"
 
 mkdir -p "$dir"
 cat > "$unit" <<EOF
